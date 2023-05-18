@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  bac_pg:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "projectcar_sales"
+      POSTGRES_USER: "project_team"
+      POSTGRES_PASSWORD: "0001"
+    ports:
+      - "123:5432"
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+  

@@ -1,0 +1,267 @@
+CREATE OR REPLACE FUNCTION process_car_data()
+RETURNS void AS $$
+BEGIN
+    -- Create projectcarsc table
+    CREATE TABLE projectcarsc (
+        id varchar(55) PRIMARY KEY,
+        vin VARCHAR(55),
+        price NUMERIC,
+        miles numeric,
+        stock_no VARCHAR(255),
+        year numeric,
+        make VARCHAR(255),
+        model VARCHAR(255),
+        trim VARCHAR(255),
+        body_type VARCHAR(255),
+        vehicle_type VARCHAR(255),
+        drivetrain VARCHAR(255),
+        transmission VARCHAR(255),
+        fuel_type VARCHAR(255),
+        engine_size NUMERIC
+    );
+    
+    -- Create projectcarsca table
+    CREATE TABLE projectcarsca (
+        id varchar(55) PRIMARY KEY,
+        vin VARCHAR(55),
+        price NUMERIC,
+        miles numeric,
+        stock_no VARCHAR(255),
+        year numeric,
+        make VARCHAR(255),
+        model VARCHAR(255),
+        trim VARCHAR(255),
+        body_type VARCHAR(255),
+        vehicle_type VARCHAR(255),
+        drivetrain VARCHAR(255),
+        transmission VARCHAR(255),
+        fuel_type VARCHAR(255),
+        engine_size NUMERIC
+    );
+    
+    -- Create projectcarscanada table
+    CREATE TABLE projectcarscanada (
+        id varchar(55) PRIMARY KEY,
+        vin VARCHAR(55),
+        price NUMERIC,
+        miles numeric,
+        stock_no VARCHAR(255),
+        year numeric,
+        make VARCHAR(255),
+        model VARCHAR(255),
+        trim VARCHAR(255),
+        body_type VARCHAR(255),
+        vehicle_type VARCHAR(255),
+        drivetrain VARCHAR(255),
+        transmission VARCHAR(255),
+        fuel_type VARCHAR(255),
+        engine_size NUMERIC
+    );
+    
+    -- Insert data into projectcarscanada from projectcarsc
+    INSERT INTO public.projectcarscanada
+    SELECT projectcarsc.id, projectcarsc.vin, projectcarsc.price, projectcarsc.miles, projectcarsc.stock_no, projectcarsc."year", projectcarsc.make, projectcarsc.model, projectcarsc.trim, projectcarsc.body_type, projectcarsc.vehicle_type, projectcarsc.drivetrain, projectcarsc.transmission, projectcarsc.fuel_type, projectcarsc.engine_size
+    FROM public.projectcarsc;
+    
+    -- Create projectcarsr table
+    CREATE TABLE projectcarsr (
+        id BIGSERIAL PRIMARY KEY,
+        brand VARCHAR(255),
+        name VARCHAR(255),
+        bodyType VARCHAR(255),
+        color VARCHAR(255),
+        fuelType VARCHAR(255),
+        year NUMERIC,
+        mileage NUMERIC,
+        transmission VARCHAR(255),
+        power NUMERIC,
+        price NUMERIC,
+        vehicleConfiguration VARCHAR(255),
+        engineName VARCHAR(255),
+        engineDisplacement VARCHAR(255)
+    );
+    
+    -- Create projectcarsrus table
+    CREATE TABLE projectcarsrus (
+        id BIGSERIAL PRIMARY KEY,
+        brand VARCHAR(255),
+        name VARCHAR(255),
+        bodyType VARCHAR(255),
+        color VARCHAR(255),
+        fuelType VARCHAR(255),
+        year NUMERIC,
+        mileage NUMERIC,
+        transmission VARCHAR(255),
+        power NUMERIC,
+        price NUMERIC,
+        vehicleConfiguration VARCHAR(255),
+        engineName VARCHAR(255),
+        engineDisplacement VARCHAR(255)
+    );
+    
+    -- Create projectcarsrussia table
+    CREATE TABLE projectcarsrussia (
+        id BIGSERIAL PRIMARY KEY,
+        brand VARCHAR(255),
+        name VARCHAR(255),
+        bodyType VARCHAR(255),
+        color VARCHAR(255),
+        fuelType VARCHAR(255),
+        year NUMERIC,
+        mileage NUMERIC,
+        transmission VARCHAR(255),
+        power NUMERIC,
+        price NUMERIC,
+        vehicleConfiguration VARCHAR(255),
+        engineName VARCHAR(255),
+        engineDisplacement VARCHAR(255)
+      );
+
+-- Insert data into projectcarsrussia from projectcarsr
+INSERT INTO public.projectcarsrussia
+SELECT projectcarsr.id, projectcarsr.brand, projectcarsr."name", projectcarsr.bodyType, projectcarsr.color, projectcarsr.fuelType, projectcarsr."year", projectcarsr.mileage, projectcarsr.transmission, projectcarsr.power, projectcarsr.price, projectcarsr.vehicleConfiguration, projectcarsr.engineName, projectcarsr.engineDisplacement
+FROM public.projectcarsr;
+
+-- Update projectcarscanada to handle NaN values
+UPDATE projectcarscanada
+SET id = NULLIF(id, 'NaN'),
+    vin = NULLIF(vin, 'NaN'),
+    price = NULLIF(price, 'NaN'),
+    miles = NULLIF(miles, 'NaN'),
+    stock_no = NULLIF(stock_no, 'NaN'),
+    year = NULLIF(year, 'NaN'),
+    make = NULLIF(make, 'NaN'),
+    model = NULLIF(model, 'NaN'),
+    trim = NULLIF(trim, 'NaN'),
+    body_type = NULLIF(body_type, 'NaN'),
+    vehicle_type = NULLIF(vehicle_type, 'NaN'),
+    drivetrain = NULLIF(drivetrain, 'NaN'),
+    fuel_type = NULLIF(fuel_type, 'NaN'),
+    engine_size = NULLIF(engine_size, 'NaN');
+    
+-- Update projectcarsrussia to handle NaN values
+UPDATE projectcarsrussia
+SET brand = NULLIF(brand, 'NaN'),
+    name = NULLIF(name, 'NaN'),
+    bodyType = NULLIF(bodyType, 'NaN'),
+    color = NULLIF(color, 'NaN'),
+    fuelType = NULLIF(fuelType, 'NaN'),
+    year = NULLIF(year, 'NaN'),
+    mileage = NULLIF(mileage, 'NaN'),
+    transmission = NULLIF(transmission, 'NaN'),
+    power = NULLIF(power, 'NaN'),
+    price = NULLIF(price, 'NaN'),
+    vehicleConfiguration = NULLIF(vehicleConfiguration, 'NaN'),
+    engineName = NULLIF(engineName, 'NaN'),
+    engineDisplacement = NULLIF(engineDisplacement, 'NaN');
+
+-- Create price_engine_size_ru table
+CREATE TABLE price_engine_size_ru (
+    price NUMERIC,
+    engineDisplacement VARCHAR(255)
+);
+
+-- Insert data into price_engine_size_ru from projectcarsrussia
+INSERT INTO public.price_engine_size_ru
+SELECT projectcarsrussia.price, projectcarsrussia.engineDisplacement
+FROM public.projectcarsrussia;
+
+-- Create price_engine_size_ca table
+CREATE TABLE price_engine_size_ca (
+    price NUMERIC,
+    engine_size NUMERIC
+);
+
+-- Insert data into price_engine_size_ca from projectcarscanada
+INSERT INTO public.price_engine_size_ca
+SELECT projectcarscanada.price, projectcarscanada.engine_size
+FROM public.projectcarscanada;
+
+-- Create mileage_transmission_ru table
+CREATE TABLE mileage_transmission_ru (
+    mileage NUMERIC,
+    transmission VARCHAR(255)
+);
+
+-- Insert data into mileage_transmission_ru from projectcarsrussia
+INSERT INTO public.mileage_transmission_ru
+SELECT projectcarsrussia.mileage, projectcarsrussia.transmission
+FROM public.projectcarsrussia;
+
+-- Create mileage_transmission_ca table
+CREATE TABLE mileage_transmission_ca (
+mileage NUMERIC,
+transmission VARCHAR(255)
+);
+
+-- Insert data into mileage_transmission_ca from projectcarscanada
+INSERT INTO public.mileage_transmission_ca
+SELECT projectcarscanada.miles, projectcarscanada.transmission
+FROM public.projectcarscanada;
+
+-- Create average_car_prices_ru table
+CREATE TABLE average_car_prices_ru AS
+SELECT 
+    year, 
+    AVG(price) AS average_price 
+FROM 
+    projectcarsrussia
+GROUP BY 
+    year 
+ORDER BY 
+    year ASC;
+
+-- Add real_price and count_cars_by_year columns to average_car_prices_ru table
+ALTER TABLE average_car_prices_ru
+ADD COLUMN real_price NUMERIC,
+ADD COLUMN count_cars_by_year INTEGER;
+
+-- Update real_price and count_cars_by_year columns in average_car_prices_ru table
+UPDATE average_car_prices_ru AS acpr
+SET real_price = acpr.average_price / (1 + (infdr.inflation / 100))
+FROM inflation_data_ru AS infdr
+WHERE acpr.year = infdr.year;
+
+UPDATE average_car_prices_ru
+SET count_cars_by_year = (
+    SELECT COUNT(*)
+    FROM projectcarsrussia AS prc
+    WHERE prc.year = average_car_prices_ru.year
+    GROUP BY average_car_prices_ru.year
+);
+
+-- Add count_cars_by_year column to average_car_prices_ca table
+ALTER TABLE average_car_prices_ca
+ADD COLUMN count_cars_by_year INTEGER;
+
+-- Update count_cars_by_year column in average_car_prices_ca table
+UPDATE average_car_prices_ca
+SET count_cars_by_year = (
+    SELECT COUNT(*)
+    FROM projectcarscanada AS prca
+    WHERE prca.year = average_car_prices_ca.year
+    GROUP BY average_car_prices_ca.year
+);
+
+-- Remove 'LTR' from engineDisplacement in price_engine_size_ru table
+UPDATE price_engine_size_ru
+SET engineDisplacement = REPLACE(engineDisplacement, 'LTR', '');
+
+-- Add transmission_value column to mileage_transmission_ru table
+ALTER TABLE mileage_transmission_ru
+ADD COLUMN transmission_value INTEGER;
+
+-- Update transmission_value column in mileage_transmission_ru table
+UPDATE mileage_transmission_ru
+SET transmission_value = 
+    CASE transmission
+        WHEN 'AT' THEN 1
+        WHEN 'Robot' THEN 2
+        WHEN 'Automatic' THEN 3
+        WHEN 'Manual' THEN 4
+        WHEN 'CVT' THEN 5
+    END
+WHERE transmission IN ('AT', 'Robot', 'Automatic', 'Manual', 'CVT');
+
+   
+
